@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WorkFlow
 
-## Getting Started
+WorkFlow is a project management application built with the Next.js App Router,
+React, TypeScript, Tailwind CSS, Supabase Auth, and PostgreSQL through Prisma.
+The workspace displays projects in Ongoing, Pending, Completed, and Target
+groups. Signed-in users can add projects with a description, dates, priority,
+status, and progress.
 
-First, run the development server:
+## Getting started
+
+Use Node.js 20.9 or newer.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+Copy-Item .env.example .env
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Fill in `.env` with the Supabase project URL, publishable key, site URL, pooled
+database URL, and direct database URL. In the Supabase dashboard, enable email
+authentication and allow the `/auth/callback` URL for local and deployed
+sign-up confirmation.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Apply the initial database migration, then start the app:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run db:deploy
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000), create an account, and add
+projects in your workspace.
 
-To learn more about Next.js, take a look at the following resources:
+## Quality checks
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm run lint
+npm run typecheck
+npm run build
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
+```text
+app/                        App Router routes and server actions
+features/auth/              Sign-in and sign-up UI
+features/projects/           Workspace, project form, and project UI
+lib/db/                      Server-only Prisma client and RLS transaction helper
+lib/supabase/                Server-side Supabase Auth clients
+prisma/schema.prisma         Project schema and status enums
+prisma/migrations/           PostgreSQL schema and row-level security migration
+components/ui/               Shared UI components
+schemas/                     Runtime validation schemas
+types/                       Shared TypeScript types
+utils/                       Shared utility functions
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The existing root-level `app/` directory is retained rather than moved into
+`src/`; Next.js supports either layout, and keeping the generated structure
+avoids unnecessary file and import changes.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Database and access control
+
+The app uses the Supabase transaction pooler for normal requests and the direct
+database connection for Prisma migrations. The database migration enables
+PostgreSQL row-level security. Each server-side project operation verifies the
+Supabase user, sets that user as the database request identity inside a
+transaction, and only reads or writes rows owned by that user.
+
+New sign-ups currently create owner workspaces. A separate manager role and
+manager dashboard are not implemented yet. Project progress is set when a
+project is created; task-based progress can replace manual progress once tasks
+are introduced.
+
+Keep `.env` and real credentials out of version control. `.env.example`
+contains placeholders only.
