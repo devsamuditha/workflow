@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node -e \"const fs=require('fs');['.next/types','.next/dev/types','.next/cache/.tsbuildinfo','tsconfig.tsbuildinfo'].forEach(p=>fs.rmSync(p,{recursive:true,force:true}))\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
