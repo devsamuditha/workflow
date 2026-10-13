@@ -1,16 +1,29 @@
 "use client";
 
 import { useActionState } from "react";
-import { signIn, signUp, type AuthActionState } from "@/app/auth/actions";
+import {
+  signIn,
+  signInManager,
+  signUp,
+  signUpManager,
+  type AuthActionState,
+} from "@/app/auth/actions";
 
 type AuthFormProps = {
-  mode: "sign-in" | "sign-up";
+  mode: "sign-in" | "sign-up" | "manager-sign-in" | "manager-sign-up";
 };
 
 const initialState: AuthActionState = {};
 
 export function AuthForm({ mode }: AuthFormProps) {
-  const actionHandler = mode === "sign-in" ? signIn : signUp;
+  const actionHandler =
+    mode === "manager-sign-in"
+      ? signInManager
+      : mode === "manager-sign-up"
+        ? signUpManager
+        : mode === "sign-in"
+          ? signIn
+          : signUp;
   const [state, formAction, pending] = useActionState(
     actionHandler,
     initialState,
@@ -27,7 +40,7 @@ export function AuthForm({ mode }: AuthFormProps) {
         </label>
         <input
           autoComplete="email"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          className="w-full rounded-lg border border-slate-300 bg-white/55 px-3 py-2.5 text-sm outline-none transition focus:border-[#659287] focus:ring-2 focus:ring-[#B1D3B9]/60"
           id="email"
           name="email"
           required
@@ -42,8 +55,8 @@ export function AuthForm({ mode }: AuthFormProps) {
           Password
         </label>
         <input
-          autoComplete={mode === "sign-in" ? "current-password" : "new-password"}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+          autoComplete={mode.endsWith("sign-up") ? "new-password" : "current-password"}
+          className="w-full rounded-lg border border-slate-300 bg-white/55 px-3 py-2.5 text-sm outline-none transition focus:border-[#659287] focus:ring-2 focus:ring-[#B1D3B9]/60"
           id="password"
           minLength={8}
           name="password"
@@ -62,15 +75,19 @@ export function AuthForm({ mode }: AuthFormProps) {
         </p>
       )}
       <button
-        className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+        className="palette-button w-full rounded-lg px-4 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
         disabled={pending}
         type="submit"
       >
         {pending
           ? "Please wait..."
-          : mode === "sign-in"
-            ? "Sign in"
-            : "Create account"}
+          : mode === "sign-up"
+            ? "Create user account"
+            : mode === "manager-sign-in"
+              ? "Sign in to manager portal"
+              : mode === "manager-sign-up"
+                ? "Create manager account"
+                : "Sign in"}
       </button>
     </form>
   );

@@ -2,6 +2,13 @@
 
 :root {
   color-scheme: light;
+  --palette-deep: #659287;
+  --palette-mid: #88bda4;
+  --palette-soft: #b1d3b9;
+  --palette-light: #e6f2dd;
+  --glass-border: rgba(255, 255, 255, 0.78);
+  --glass-surface: rgba(230, 242, 221, 0.56);
+  --glass-shadow: 0 18px 55px rgba(58, 91, 82, 0.12);
 }
 
 @theme inline {
@@ -10,7 +17,37 @@
 
 body {
   margin: 0;
-  background: #f8fafc;
+  min-height: 100vh;
+  background-color: var(--palette-light);
+  background-image:
+    radial-gradient(ellipse at 12% 4%, rgba(136, 189, 164, 0.4), transparent 34rem),
+    radial-gradient(ellipse at 90% 28%, rgba(177, 211, 185, 0.45), transparent 31rem),
+    linear-gradient(145deg, #f7faf3 0%, #e6f2dd 48%, #f3f8ef 100%);
+  background-attachment: fixed;
   color: #0f172a;
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+.glass-panel {
+  border: 1px solid var(--glass-border);
+  background: var(--glass-surface);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+.glass-panel-soft {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  background: rgba(230, 242, 221, 0.4);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.palette-button {
+  background-image: linear-gradient(115deg, var(--palette-deep), var(--palette-mid));
+  box-shadow: 0 10px 24px rgba(101, 146, 135, 0.24);
+}
+
+.palette-button:hover {
+  box-shadow: 0 13px 28px rgba(101, 146, 135, 0.34);
 }

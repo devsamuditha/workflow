@@ -43,3 +43,15 @@ model Project {
   @@index([ownerId, updatedAt(sort: Desc)])
   @@map("projects")
 }
+
+model Reminder {
+  id          String   @id @default(uuid()) @db.Uuid
+  ownerId     String   @map("owner_id") @db.Uuid
+  title       String   @db.VarChar(120)
+  description String?  @db.Text
+  date        DateTime @db.Date
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([ownerId, date])
+  @@map("reminders")
+}
